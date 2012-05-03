@@ -26,9 +26,9 @@ class PyWatermark(object):
         c.saveState()
         c.translate(500,100)
         c.rotate(45)
-        c.drawCentredString(0, 0, "A WATERMARK!")
-        c.drawCentredString(0, 300, "A WATERMARK!")
-        c.drawCentredString(0, 600, "A WATERMARK!")
+        c.drawCentredString(0, 0, watermark)
+        c.drawCentredString(0, 300, watermark)
+        c.drawCentredString(0, 600,  watermark)
         c.restoreState()
         c.save() 
         
