@@ -14,7 +14,7 @@ class MyForm(QtGui.QMainWindow, Ui_MainWindow):
         
     def getfile(self):
         fileName,fltr = QtGui.QFileDialog.getOpenFileName(self,
-            "Open Image", "/mnt/f002/jr/journals", "Email PDF (*.pdf)")
+            "Open Image", "/mnt/f002/jr/CON1301 N Journal Internal Transfers", "Email PDF (*.pdf)")
         print fileName
         
         self.lnFile.setText(fileName)

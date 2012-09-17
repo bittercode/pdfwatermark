@@ -12,11 +12,13 @@ import os
 
 class PyWatermark(object):
     
-    def AddWatermark(self,watermark,filein,fileout):
+    def AddWatermark(self,watermark,pdffile):
         #Use reportlab to create a PDF that will be used
         #as a watermark on another PDF.
+        fileout = "temp2_watermark.pdf"
         c= canvas.Canvas("temp_watermark.pdf")
         c.setFont("Courier", 60)
+        c.setTitle("Stamped")
         #This next setting with make the text of our
         #watermark gray, nice touch for a watermark.
         c.setFillGray(0.5,0.5)
@@ -27,6 +29,55 @@ class PyWatermark(object):
         c.translate(500,100)
         c.rotate(45)
         c.drawCentredString(0, 0, watermark)
+        c.drawCentredString(0, 150, watermark)
+        c.drawCentredString(0, 400,  watermark)
+        c.restoreState()
+        c.save() 
+        
+        #Read in the PDF that will have the PDF applied to it.
+        output = PdfFileWriter()
+        input1 = PdfFileReader(file(pdffile, "rb"))
+        
+        #Read in the file created above by ReportLab for our watermark.
+        twatermark = PdfFileReader(file("temp_watermark.pdf", "rb"))
+        
+        numPages = input1.getNumPages()
+        for i in range(numPages):
+        
+            #Open up the orgininal PDF.
+            page1 = input1.getPage(i)
+        
+            #Apply the watermark by merging the two PDF files.
+            page1.mergePage(twatermark.getPage(0))
+            #Send the resultant PDF to the output stream.
+            output.addPage(page1)
+        
+        #write the output of our new, watermarked PDF.
+        outputStream = file(fileout, "wb")
+        output.write(outputStream)
+        outputStream.close()
+        os.remove("temp_watermark.pdf")
+        #os.remove(filein)
+        copyfile(fileout,pdffile)
+        os.remove(fileout)
+     
+    def PrintInfo(self,watermark,pdffile):
+        #Use reportlab to create a PDF that will be used
+        #as a watermark on another PDF.
+        fileout = "temp2_watermark.pdf"
+        c= canvas.Canvas("temp_watermark.pdf")
+        c.setFont("Courier", 60)
+        c.setTitle("Stamped")
+        #This next setting with make the text of our
+        #watermark gray, nice touch for a watermark.
+        c.setFillGray(0.5,0.5)
+        #Set up our watermark document. Our watermark
+        #will be rotated 45 degrees from the direction
+        #of our underlying document.
+        c.saveState()
+        c.translate(500,100)
+        c.rotate(315)
+        c.drawCentredString(0, 0, watermark)
         c.drawCentredString(0, 300, watermark)
         c.drawCentredString(0, 600,  watermark)
         c.restoreState()
@@ -34,30 +85,27 @@ class PyWatermark(object):
         
         #Read in the PDF that will have the PDF applied to it.
         output = PdfFileWriter()
-        input1 = PdfFileReader(file(filein, "rb")) 
+        input1 = PdfFileReader(file(pdffile, "rb"))
         
-        #Just to demo this function from pyPdf.
-        #If the PDF has a title, this will print it out.
-        print "title = %s" % (input1.getDocumentInfo().title)
+        print "pages:" + str(input1.getNumPages())
+        print "title:" + str(input1.getDocumentInfo().title)
         
         #Open up the orgininal PDF.
-        page1 = input1.getPage(0)
+        #page1 = input1.getPage(0)
         
         #Read in the file created above by ReportLab for our watermark.
-        twatermark = PdfFileReader(file("temp_watermark.pdf", "rb"))
+        #twatermark = PdfFileReader(file("temp_watermark.pdf", "rb"))
         #Apply the watermark by merging the two PDF files.
-        page1.mergePage(twatermark.getPage(0))
+        #page1.mergePage(twatermark.getPage(0))
         #Send the resultant PDF to the output stream.
-        output.addPage(page1)
-        
-        #Just to demo this function from pyPdf.
-        #Return the number of pages in the watermarked PDF.
-        print "watermarked_pdf.pdf has %s pages." % input1.getNumPages()
+        #output.addPage(page1)
         
         #write the output of our new, watermarked PDF.
-        outputStream = file(fileout, "wb")
-        output.write(outputStream)
-        outputStream.close()
-        os.remove("temp_watermark.pdf")
-        os.remove(filein)
+        #outputStream = file(fileout, "wb")
+        #output.write(outputStream)
+        #outputStream.close()
+        #os.remove("temp_watermark.pdf")
+        #os.remove(filein)
+        #copyfile(fileout,pdffile)
+        #os.remove(fileout)
         
